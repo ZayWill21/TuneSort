@@ -1,6 +1,6 @@
 variable "env" {
   description = "Where is this being deployed"
-  default = "dev"
+  default = "Dev"
 }
 
 variable "region" {
