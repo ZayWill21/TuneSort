@@ -1,0 +1,32 @@
+body {
+    background-image: url('{{ url_for(' static', filename=' images/Background.jpg') }}');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+}
+
+.nav-left h1 {
+    color: white;
+    margin: 0;
+}
+
+.nav-right a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+.nav-right a:hover {
+    text-decoration: underline;
+}
