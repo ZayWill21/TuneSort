@@ -21,3 +21,7 @@ def login():
 def encrypt_password(password):
     # This is a very simple encryption method
     return password[::-1]
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
