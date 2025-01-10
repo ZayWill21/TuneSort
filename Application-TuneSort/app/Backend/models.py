@@ -31,11 +31,11 @@ class Song(db.Model):
         }
     
 class Playlist(db.Model):
-    id = db.Column(db.Intger, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     playlist_name = db.Column(db.String(80), nullable=False)
-    user_id = db.Column(db.Intger, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('playlists', lazy=True))
-    song_ids = db.Column(db.Intger, db.ForeignKey('song.id'), nullable=False)
+    song_ids = db.Column(db.Integer, db.ForeignKey('song.id'), nullable=False)
     songs = db.relationship('Song', backref=db.backref('playlists', lazy=True))
     
     def to_json(self):
