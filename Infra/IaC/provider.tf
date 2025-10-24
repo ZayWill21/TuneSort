@@ -9,8 +9,5 @@ terraform {
     aws = {
         source = "hashicorp/aws"
     }
-    docker = {
-        source = "hashicorp/docker"
-    }
   }
 }
