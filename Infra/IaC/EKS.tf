@@ -110,7 +110,10 @@ resource "aws_iam_role_policy_attachment" "ssm_managed_instance" {
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
   role       = aws_iam_role.node_instance_role.name
 }
-
+resource "aws_iam_role_policy_attachment" "ecr_power_user" {
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonECRPowerUser"
+  role       = aws_iam_role.node_instance_role.name
+}
 # Launch Template
 resource "aws_launch_template" "node_group" {
   name = "${var.stack_name}-LaunchTemplate"
