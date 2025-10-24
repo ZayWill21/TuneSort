@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spotify-genre-sorter
+  labels:
+    app: spotify-genre-sorter
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spotify-genre-sorter
+  template:
+    metadata:
+      labels:
+        app: spotify-genre-sorter
+    spec:
+      containers:
+      - name: spotify-genre-sorter
+        image: ${ECR_REPOSITORY_URL}/spotify-genre-sorter:latest
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - secretRef:
+            name: spotify-credentials
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
