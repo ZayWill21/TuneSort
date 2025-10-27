@@ -84,7 +84,7 @@ The genre sorting algorithm:
 ### Local Development Setup
 
 1. Clone the repository:
-```bash
+`bash
 git clone https://github.com/yourusername/spotify-genre-sorter.git
 cd spotify-genre-sorter
 
@@ -111,8 +111,6 @@ Run the application locally:
 uvicorn app.main:app --reload
 
 Access the API at http://localhost:8000
-
-bash```
 
 ## Containerization
 
