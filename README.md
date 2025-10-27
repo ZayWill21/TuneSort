@@ -85,8 +85,8 @@ The genre sorting algorithm:
 
 1. Clone the repository:
 `bash
-git clone https://github.com/yourusername/spotify-genre-sorter.git
-cd spotify-genre-sorter
+git clone (https://github.com/ZayWill21/TuneSort.git
+cd Application-tunesort
 
 Create a virtual environment:
     
