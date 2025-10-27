@@ -1,56 +1,241 @@
-## Overview
+# Spotify Genre Sorter
 
-TuneSort is an innovative application designed to bring organization and harmony to your music playlists. The app automates the process of sorting songs into playlists based on their genres, solving a common pet peeve of having playlists with mixed genres playing on shuffle. With TuneSort, users can enjoy seamless music experiences by categorizing songs into appropriate playlists automatically.
+A cloud-native microservice that organizes Spotify playlists by automatically categorizing tracks by genre.
 
-## Goals and Purpose
+## Project Overview
 
-One of my personal pet peeves is encountering playlists with different genres of music shuffled together, disrupting the listening experience. TuneSort addresses this by allowing users to:
+Spotify Genre Sorter helps music enthusiasts organize their music collections by analyzing tracks in Spotify playlists and categorizing them by genre. This tool leverages artist metadata from Spotify to create new, organized playlists grouped by musical genre.
 
-- Put all their favorite songs into one playlist.
-- Automatically sort those songs into genre-specific playlists.
-- Enjoy a well-organized music library with minimal effort.
+Built as a complete modern application, this project demonstrates:
+
+- Third-party API integration (Spotify Web API)
+- Containerization best practices
+- Cloud-native deployment on AWS EKS
+- Scalable microservice architecture
+
+The service can process playlists of any size while maintaining performance through horizontal scaling capabilities provided by Kubernetes orchestration.
+
+## System Architecture
+
+### Component Overview
+- API Layer: FastAPI-based REST API for handling user requests
+- Spotify Integration Module: Manages OAuth authentication and Spotify Web API communication
+- Genre Analysis Engine: Core business logic for genre identification and processing
+- Infrastructure Layer: AWS cloud infrastructure (EKS, ECR, IAM, networking)
+
+### Data Flow
+#### Authentication Flow
+User initiates authentication → Spotify OAuth consent → Authorization code → Access token
+
+#### Playlist Processing Flow
+User submits playlist → System retrieves tracks → Identifies artists and genres → Categorizes and groups tracks → Creates new playlists
+
+#### Deployment Flow
+Code changes pushed to GitHub → GitHub Actions builds Docker image → Image pushed to ECR → Kubernetes deployment updated
 
 ## Key Features
 
-- **Automated Sorting:** Analyze the metadata of songs and classify them into genre-specific playlists.
-- **Dynamic User Interface:** A React-based frontend enabling users to connect to their Spotify accounts and select playlists for sorting.
-- **Custom Playlists:** Automatically create new playlists for genres that don't already exist.
-- **Efficient Processing:** Seamlessly process entire playlists to ensure all songs are sorted appropriately.
+### Core Functionality
+- Spotify OAuth Integration
+- Playlist Analysis
+- Genre Identification and Normalization
+- Automatic Playlist Generation
+- RESTful API
 
-## Technologies Used
+### Technical Features
+- Containerized Application (Docker)
+- Kubernetes Deployment (Amazon EKS)
+- CI/CD Pipeline (GitHub Actions)
+- Cloud-Native Design
+- Integrated Observability
 
-TuneSort leverages modern tools and technologies to deliver its functionality:
+## Implementation Details
 
-- **Terraform:** Used to provision the AWS infrastructure, ensuring scalable and reliable deployment.
-- **Docker:** Containerizes the server and client applications, enabling consistent environments across development and production.
-- **AWS Services:**
-    - **AWS Amplify:** Hosts and manages the frontend application for seamless user access.
-    - **Amazon DynamoDB:** Serves as the backend database to store and manage playlist and song metadata efficiently.
-- **Python:** Powers the backend application and integrates with OpenAI APIs for genre classification.
-- **OpenAI APIs:** Reads song metadata and determines the genre classification through AI-driven prompts.
-- **React:** Builds the dynamic and user-friendly frontend interface.
+### Application Structure
+The application uses Python with FastAPI and is organized into modules:
 
-## How It Works
+- Main Application: HTTP request handling
+- Spotify Client: API communication
+- Genre Sorter: Business logic
+- Configuration: Settings management
 
-1. **User Authentication:** Users log in and connect their Spotify accounts through the TuneSort interface.
-2. **Playlist Selection:** Users select a playlist they wish to organize.
-3. **Metadata Analysis:** The backend, powered by Python and OpenAI APIs, reads the metadata of each song to determine its genre.
-4. **Playlist Creation and Sorting:**
-    - If a playlist for the identified genre doesn't already exist, the system creates one.
-    - The song is then moved to the appropriate playlist.
-5. **Dynamic Updates:** The process continues until all songs in the selected playlist are sorted.
+### Key Algorithms
+The genre sorting algorithm:
 
-## Why "TuneSort"?
+1. Retrieves tracks from specified playlist
+2. Identifies artists for each track
+3. Retrieves artist genres from Spotify
+4. Normalizes genre names
+5. Selects primary genre for each track
+6. Groups tracks by genre
+7. Creates new playlists as requested
 
-The name "TuneSort" reflects the app's core functionality—sorting tunes into their respective categories. It streamlines playlist management, ensuring users have genre-specific playlists without manual effort.
+### Technology Stack
+- Backend: Python 3.9, FastAPI, Spotipy
+- Containerization: Docker
+- Orchestration: Kubernetes on Amazon EKS
+- CI/CD: GitHub Actions
+- Registry: Amazon ECR
+- Cloud Provider: AWS
+- Monitoring: Prometheus, Grafana
+
+## Deployment Workflow
+
+### Local Development Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/spotify-genre-sorter.git
+cd spotify-genre-sorter
+
+Create a virtual environment:
+    
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+    
+Install dependencies:
+    
+pip install -r requirements.txt
+
+    
+Create a .env file with your Spotify credentials:
+    
+SPOTIFY_CLIENT_ID=your_client_id
+SPOTIFY_CLIENT_SECRET=your_client_secret
+SPOTIFY_REDIRECT_URI=http://localhost:8000/callback
+
+    
+Run the application locally:
+    
+uvicorn app.main:app --reload
+
+Access the API at http://localhost:8000
+
+
+## Containerization
+
+The application uses a multi-stage Docker build process that:
+
+- Creates a lean Python environment
+- Installs production dependencies
+- Configures security settings
+- Sets up health checks and entry points
+
+### Container Registry
+The Docker image is stored in Amazon ECR, providing:
+
+- Secure storage for container images
+- Vulnerability scanning
+- IAM integration
+- Fast image retrieval
+
+### Kubernetes Deployment
+The application runs on Amazon EKS with:
+
+- Multiple replicas for high availability
+- Resource limits and requests
+- Health checks for automatic recovery
+- Secrets management
+- Service and ingress configurations
+
+## CI/CD Pipeline
+
+The GitHub Actions workflow automates:
+
+- Building and testing the application
+- Building and tagging Docker images
+- Pushing images to ECR
+- Updating Kubernetes deployments
+- Verifying successful deployment
+
+## Challenges and Solutions
+
+### ECR Permission Issues
+**Challenge:** Access denied errors when pushing images to ECR during CI/CD.
+
+**Solution:**
+- Created dedicated IAM role for GitHub Actions
+- Implemented OIDC authentication
+- Configured repository policies
+- Enhanced error logging
+
+### CrashLoopBackOff Pod Errors
+**Challenge:** Pods crashing immediately after deployment.
+
+**Solution:**
+- Enhanced logging configuration
+- Identified missing environment variables
+- Implemented proper health probes
+- Added init containers
+
+### EKS Node Group IAM Permissions
+**Challenge:** "ImagePullBackOff" errors when nodes couldn't access ECR.
+
+**Solution:**
+- Updated node instance role permissions
+- Created Kubernetes secrets for ECR authentication
+- Added imagePullSecrets to deployments
+- Implemented node bootstrap configuration
+
+### Network Connectivity Issues
+**Challenge:** Connectivity problems with Spotify API from EKS.
+
+**Solution:**
+- Updated security groups
+- Configured proper DNS resolution
+- Implemented network policies
+- Set up VPC endpoints
+- Added retry logic
+
+    
+## User Guide
+
+### Getting Started
+1. Access the service and click "Login with Spotify"
+2. Grant the requested permissions
+3. Select a playlist to analyze
+4. Choose analysis options
+5. Submit the request
+6. View results and access new playlists
+
+### API Endpoints
+- Login: Initiates Spotify OAuth
+- Callback: Handles OAuth callback
+- Sort Playlist: Analyzes and creates playlists
+- Health: Service health information
+
+### Example Use Cases
+- Organizing large music libraries
+- Discovering genre patterns
+- Creating themed playlists
+- Playlist cleanup
+
+## Monitoring and Maintenance
+
+### Observability
+- Structured logging
+- Performance metrics
+- Request tracing
+- Alert notifications
+
+### Maintenance Procedures
+- Regular dependency updates
+- Security scanning
+- Performance testing
+- Backup procedures
+- Certificate rotation
 
 ## Future Enhancements
+- Web frontend user interface
+- Multi-user support
+- Advanced genre analysis with machine learning
+- Detailed playlist statistics
+- Recommendation engine
+- Batch processing capabilities
+- Additional music platform integrations
+- Customizable genre mapping
 
-- Support for additional music platforms beyond Spotify.
-- Advanced customization options for sorting criteria (e.g., mood, tempo).
-- Enhanced AI capabilities for more nuanced genre classification.
-- Integration with AWS Lambda for serverless execution of backend processes.
+## Contributing
 
----
-
-TuneSort is designed to transform how users experience their music libraries by removing the chaos of disorganized playlists. With cutting-edge technologies like Terraform, Docker, AWS Amplify, DynamoDB, and OpenAI APIs, TuneSort ensures a seamless, efficient, and enjoyable music-sorting experience.
+Contributions are welcome! Please feel free to submit a Pull Request.
